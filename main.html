@@ -2,136 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Draggable Cubes</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    /* Defined Area (Container) */
-    .items {
-      width: 600px;
-      height: 600px;
-      background-color: #fff;
-      border: 3px solid #333;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(5, 1fr);
-      gap: 5px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Cube Styles */
-    .item {
-      background: #007bff;
-      color: white;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-      border-radius: 6px;
-      cursor: grab;
-      position: absolute; /* Important for drag positioning */
-      width: calc(20% - 5px);
-      height: calc(20% - 5px);
-      transition: box-shadow 0.2s;
-    }
-
-    .item:active {
-      cursor: grabbing;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    }
-  </style>
+  <title>Click and Drag</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="items">
-    <div class="item">01</div>
-    <div class="item">02</div>
-    <div class="item">03</div>
-    <div class="item">04</div>
-    <div class="item">05</div>
-    <div class="item">06</div>
-    <div class="item">07</div>
-    <div class="item">08</div>
-    <div class="item">09</div>
-    <div class="item">10</div>
-    <div class="item">11</div>
-    <div class="item">12</div>
-    <div class="item">13</div>
-    <div class="item">14</div>
-    <div class="item">15</div>
-    <div class="item">16</div>
-    <div class="item">17</div>
-    <div class="item">18</div>
-    <div class="item">19</div>
-    <div class="item">20</div>
-    <div class="item">21</div>
-    <div class="item">22</div>
-    <div class="item">23</div>
-    <div class="item">24</div>
-    <div class="item">25</div>
+    <div class="item item1">01</div>
+    <div class="item item2">02</div>
+    <div class="item item3">03</div>
+    <div class="item item4">04</div>
+    <div class="item item5">05</div>
+    <div class="item item6">06</div>
+    <div class="item item7">07</div>
+    <div class="item item8">08</div>
+    <div class="item item9">09</div>
+    <div class="item item10">10</div>
+    <div class="item item11">11</div>
+    <div class="item item12">12</div>
+    <div class="item item13">13</div>
+    <div class="item item14">14</div>
+    <div class="item item15">15</div>
+    <div class="item item16">16</div>
+    <div class="item item17">17</div>
+    <div class="item item18">18</div>
+    <div class="item item19">19</div>
+    <div class="item item20">20</div>
+    <div class="item item21">21</div>
+    <div class="item item22">22</div>
+    <div class="item item23">23</div>
+    <div class="item item24">24</div>
+    <div class="item item25">25</div>
   </div>
 
-  <script>
-    const container = document.querySelector('.items');
-    const items = document.querySelectorAll('.item');
+<script>
+// ====== JavaScript: Click and Drag Scroll ======
 
-    // Arrange items in a grid initially
-    const gridCols = 5;
-    const cubeSize = container.clientWidth / gridCols;
-    items.forEach((item, i) => {
-      const row = Math.floor(i / gridCols);
-      const col = i % gridCols;
-      item.style.left = `${col * cubeSize}px`;
-      item.style.top = `${row * cubeSize}px`;
-    });
+const slider = document.querySelector('.items');
+let isDown = false;
+let startX;
+let scrollLeft;
 
-    let selectedCube = null;
-    let offsetX, offsetY;
+// Mouse pressed down
+slider.addEventListener('mousedown', (e) => {
+  isDown = true;
+  slider.classList.add('active');
+  startX = e.pageX - slider.offsetLeft;
+  scrollLeft = slider.scrollLeft;
+});
 
-    items.forEach(item => {
-      item.addEventListener('mousedown', (e) => {
-        selectedCube = e.target;
-        const rect = selectedCube.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
+// Mouse leaves the area
+slider.addEventListener('mouseleave', () => {
+  isDown = false;
+  slider.classList.remove('active');
+});
 
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
+// Mouse released
+slider.addEventListener('mouseup', () => {
+  isDown = false;
+  slider.classList.remove('active');
+});
 
-        selectedCube.style.transition = "none";
-        selectedCube.style.zIndex = 1000;
-      });
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!selectedCube) return;
-
-      const containerRect = container.getBoundingClientRect();
-      let x = e.clientX - containerRect.left - offsetX;
-      let y = e.clientY - containerRect.top - offsetY;
-
-      // Boundary check
-      x = Math.max(0, Math.min(x, containerRect.width - selectedCube.offsetWidth));
-      y = Math.max(0, Math.min(y, containerRect.height - selectedCube.offsetHeight));
-
-      selectedCube.style.left = `${x}px`;
-      selectedCube.style.top = `${y}px`;
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (!selectedCube) return;
-      selectedCube.style.transition = "box-shadow 0.2s";
-      selectedCube.style.zIndex = 1;
-      selectedCube = null;
-    });
-  </script>
+// Mouse moves while dragging
+slider.addEventListener('mousemove', (e) => {
+  if (!isDown) return; // Only when holding click
+  e.preventDefault();
+  const x = e.pageX - slider.offsetLeft;
+  const walk = (x - startX) * 2; // scroll speed multiplier
+  slider.scrollLeft = scrollLeft - walk;
+});
+</script>
 </body>
 </html>
