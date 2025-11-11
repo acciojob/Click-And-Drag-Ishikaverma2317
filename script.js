@@ -1,56 +1,48 @@
-// Select elements
-const items = document.querySelectorAll(".item");
-const container = document.querySelector(".container");
+const container = document.querySelector('.items');
+const items = document.querySelectorAll('.item');
+
+// Place cubes in grid initially
+const cols = 5;
+const size = 110; // cube + gap
+
+items.forEach((item, i) => {
+  const row = Math.floor(i / cols);
+  const col = i % cols;
+  item.style.left = `${col * size + 10}px`;
+  item.style.top = `${row * size + 10}px`;
+});
 
 let activeItem = null;
 let offsetX = 0;
 let offsetY = 0;
 
-// Arrange cubes initially in grid
-let index = 0;
 items.forEach(item => {
-  const row = Math.floor(index / 2);
-  const col = index % 2;
-  item.style.left = `${col * 120 + 40}px`;
-  item.style.top = `${row * 120 + 40}px`;
-  index++;
-});
-
-// When mouse pressed on cube
-items.forEach(item => {
-  item.addEventListener("mousedown", (e) => {
+  item.addEventListener('mousedown', e => {
     activeItem = item;
     offsetX = e.clientX - item.offsetLeft;
     offsetY = e.clientY - item.offsetTop;
+    item.style.cursor = 'grabbing';
   });
 });
 
-// While moving mouse
-document.addEventListener("mousemove", (e) => {
+document.addEventListener('mousemove', e => {
   if (!activeItem) return;
 
-  let x = e.clientX - offsetX;
-  let y = e.clientY - offsetY;
+  const rect = container.getBoundingClientRect();
+  let x = e.clientX - rect.left - offsetX;
+  let y = e.clientY - rect.top - offsetY;
 
-  const containerRect = container.getBoundingClientRect();
-  const itemRect = activeItem.getBoundingClientRect();
-
-  const minX = 0;
-  const minY = 0;
-  const maxX = container.clientWidth - itemRect.width;
-  const maxY = container.clientHeight - itemRect.height;
-
-  // Boundary condition: stay inside box
-  if (x < minX) x = minX;
-  if (y < minY) y = minY;
-  if (x > maxX) x = maxX;
-  if (y > maxY) y = maxY;
+  // Boundary condition
+  x = Math.max(0, Math.min(x, rect.width - activeItem.offsetWidth));
+  y = Math.max(0, Math.min(y, rect.height - activeItem.offsetHeight));
 
   activeItem.style.left = `${x}px`;
   activeItem.style.top = `${y}px`;
 });
 
-// When mouse released
-document.addEventListener("mouseup", () => {
-  activeItem = null;
+document.addEventListener('mouseup', () => {
+  if (activeItem) {
+    activeItem.style.cursor = 'grab';
+    activeItem = null;
+  }
 });
