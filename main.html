@@ -2,18 +2,136 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drag and Drop Cubes</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Draggable Cubes</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Defined Area (Container) */
+    .items {
+      width: 600px;
+      height: 600px;
+      background-color: #fff;
+      border: 3px solid #333;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Cube Styles */
+    .item {
+      background: #007bff;
+      color: white;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      border-radius: 6px;
+      cursor: grab;
+      position: absolute; /* Important for drag positioning */
+      width: calc(20% - 5px);
+      height: calc(20% - 5px);
+      transition: box-shadow 0.2s;
+    }
+
+    .item:active {
+      cursor: grabbing;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+  </style>
 </head>
 <body>
-  <div class="items" id="items">
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
+  <div class="items">
+    <div class="item">01</div>
+    <div class="item">02</div>
+    <div class="item">03</div>
+    <div class="item">04</div>
+    <div class="item">05</div>
+    <div class="item">06</div>
+    <div class="item">07</div>
+    <div class="item">08</div>
+    <div class="item">09</div>
+    <div class="item">10</div>
+    <div class="item">11</div>
+    <div class="item">12</div>
+    <div class="item">13</div>
+    <div class="item">14</div>
+    <div class="item">15</div>
+    <div class="item">16</div>
+    <div class="item">17</div>
+    <div class="item">18</div>
+    <div class="item">19</div>
+    <div class="item">20</div>
+    <div class="item">21</div>
+    <div class="item">22</div>
+    <div class="item">23</div>
+    <div class="item">24</div>
+    <div class="item">25</div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const container = document.querySelector('.items');
+    const items = document.querySelectorAll('.item');
+
+    // Arrange items in a grid initially
+    const gridCols = 5;
+    const cubeSize = container.clientWidth / gridCols;
+    items.forEach((item, i) => {
+      const row = Math.floor(i / gridCols);
+      const col = i % gridCols;
+      item.style.left = `${col * cubeSize}px`;
+      item.style.top = `${row * cubeSize}px`;
+    });
+
+    let selectedCube = null;
+    let offsetX, offsetY;
+
+    items.forEach(item => {
+      item.addEventListener('mousedown', (e) => {
+        selectedCube = e.target;
+        const rect = selectedCube.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        selectedCube.style.transition = "none";
+        selectedCube.style.zIndex = 1000;
+      });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!selectedCube) return;
+
+      const containerRect = container.getBoundingClientRect();
+      let x = e.clientX - containerRect.left - offsetX;
+      let y = e.clientY - containerRect.top - offsetY;
+
+      // Boundary check
+      x = Math.max(0, Math.min(x, containerRect.width - selectedCube.offsetWidth));
+      y = Math.max(0, Math.min(y, containerRect.height - selectedCube.offsetHeight));
+
+      selectedCube.style.left = `${x}px`;
+      selectedCube.style.top = `${y}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!selectedCube) return;
+      selectedCube.style.transition = "box-shadow 0.2s";
+      selectedCube.style.zIndex = 1;
+      selectedCube = null;
+    });
+  </script>
 </body>
 </html>
