@@ -1,40 +1,37 @@
 body {
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: #f4f4f9;
   margin: 0;
-}
-
-h2 {
-  margin-bottom: 20px;
+  height: 100vh;
+  background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
 }
 
 .container {
-  width: 400px;
+  width: 500px;
   height: 400px;
-  background-color: #e0e0e0;
-  border: 2px solid #333;
-  display: flex;
-  flex-wrap: wrap;
+  border: 3px dashed #fff;
+  border-radius: 10px;
   position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-.cube {
+.item {
   width: 80px;
   height: 80px;
   background-color: #6c63ff;
   margin: 10px;
   border-radius: 10px;
   cursor: grab;
-  position: absolute; /* important for free movement */
-  transition: background-color 0.2s;
+  position: absolute;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
-.cube:active {
+.item:active {
   cursor: grabbing;
   background-color: #4e47d0;
+  transform: scale(1.05);
 }
