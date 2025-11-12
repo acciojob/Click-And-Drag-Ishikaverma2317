@@ -2,68 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Click and Drag</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Draggable Cubes</title>
+  <style>
+    body {
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .items {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      border: 3px solid #222;
+      background: #fff;
+    }
+
+    .item {
+      width: 80px;
+      height: 80px;
+      background: #3498db;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border-radius: 8px;
+      position: absolute;
+      user-select: none;
+      cursor: grab;
+    }
+
+    .item:active {
+      cursor: grabbing;
+    }
+  </style>
 </head>
 <body>
   <div class="items">
-    <div class="item">01</div>
-    <div class="item">02</div>
-    <div class="item">03</div>
-    <div class="item">04</div>
-    <div class="item">05</div>
-    <div class="item">06</div>
-    <div class="item">07</div>
-    <div class="item">08</div>
-    <div class="item">09</div>
-    <div class="item">10</div>
-    <div class="item">11</div>
-    <div class="item">12</div>
-    <div class="item">13</div>
-    <div class="item">14</div>
-    <div class="item">15</div>
-    <div class="item">16</div>
-    <div class="item">17</div>
-    <div class="item">18</div>
-    <div class="item">19</div>
-    <div class="item">20</div>
-    <div class="item">21</div>
-    <div class="item">22</div>
-    <div class="item">23</div>
-    <div class="item">24</div>
-    <div class="item">25</div>
+    <!-- generate 25 cubes -->
+    <div class="item" style="left:20px;top:20px;">01</div>
+    <div class="item" style="left:120px;top:20px;">02</div>
+    <div class="item" style="left:220px;top:20px;">03</div>
+    <div class="item" style="left:320px;top:20px;">04</div>
+    <div class="item" style="left:420px;top:20px;">05</div>
+    <div class="item" style="left:20px;top:120px;">06</div>
+    <div class="item" style="left:120px;top:120px;">07</div>
+    <div class="item" style="left:220px;top:120px;">08</div>
+    <div class="item" style="left:320px;top:120px;">09</div>
+    <div class="item" style="left:420px;top:120px;">10</div>
+    <div class="item" style="left:20px;top:220px;">11</div>
+    <div class="item" style="left:120px;top:220px;">12</div>
+    <div class="item" style="left:220px;top:220px;">13</div>
+    <div class="item" style="left:320px;top:220px;">14</div>
+    <div class="item" style="left:420px;top:220px;">15</div>
+    <div class="item" style="left:20px;top:320px;">16</div>
+    <div class="item" style="left:120px;top:320px;">17</div>
+    <div class="item" style="left:220px;top:320px;">18</div>
+    <div class="item" style="left:320px;top:320px;">19</div>
+    <div class="item" style="left:420px;top:320px;">20</div>
   </div>
 
   <script>
-    // ====== DRAG SCROLL FUNCTIONALITY ======
-    const slider = document.querySelector('.items');
-    let isDown = false;
-    let startX;
-    let scrollLeft;
+    const container = document.querySelector('.items');
+    const items = document.querySelectorAll('.item');
+    let active = null;
+    let offsetX, offsetY;
 
-    slider.addEventListener('mousedown', (e) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
+    items.forEach(item => {
+      item.addEventListener('mousedown', e => {
+        active = item;
+        const rect = item.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        item.style.transition = 'none';
+      });
     });
 
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
+    document.addEventListener('mousemove', e => {
+      if (!active) return;
+      const containerRect = container.getBoundingClientRect();
+      let x = e.clientX - containerRect.left - offsetX;
+      let y = e.clientY - containerRect.top - offsetY;
+
+      // keep inside container boundaries
+      x = Math.max(0, Math.min(container.clientWidth - active.offsetWidth, x));
+      y = Math.max(0, Math.min(container.clientHeight - active.offsetHeight, y));
+
+      active.style.left = x + 'px';
+      active.style.top = y + 'px';
     });
 
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-
-    slider.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; // scroll speed
-      slider.scrollLeft = scrollLeft - walk;
+    document.addEventListener('mouseup', () => {
+      if (active) {
+        active.style.transition = 'transform 0.1s';
+        active = null;
+      }
     });
   </script>
 </body>
